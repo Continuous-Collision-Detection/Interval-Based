@@ -40,6 +40,5 @@ if(INTERVAL_CCD_WITH_TIMER)
   target_compile_definitions(${PROJECT_NAME} PRIVATE INTERVAL_CCD_USE_TIMER)
 endif()
 
-# WARNING: This requires a check  as it will break compatability with non-AVX
-#          processors.
+target_compile_definitions(${PROJECT_NAME} PUBLIC NOMINMAX)
 
