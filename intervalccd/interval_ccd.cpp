@@ -8,7 +8,7 @@
 
 namespace intervalccd
 {
-static double CCD_LENGTH_TOL = 1e-6;
+
 double compute_face_vertex_tolerance_1d(
     const Eigen::Vector3d& vertex_start,
     const Eigen::Vector3d& face_vertex0_start,
@@ -17,7 +17,8 @@ double compute_face_vertex_tolerance_1d(
     const Eigen::Vector3d& vertex_end,
     const Eigen::Vector3d& face_vertex0_end,
     const Eigen::Vector3d& face_vertex1_end,
-    const Eigen::Vector3d& face_vertex2_end)
+    const Eigen::Vector3d& face_vertex2_end,
+    const double input_tol)
 {
     double dl = std::max(
         std::max(
@@ -27,7 +28,7 @@ double compute_face_vertex_tolerance_1d(
             (face_vertex1_end - face_vertex1_start).norm(),
             (face_vertex2_end - face_vertex2_start).norm()));
 
-    return CCD_LENGTH_TOL / dl;
+    return input_tol / dl;
 }
 
 Eigen::Vector3I cross(const Eigen::Vector3I& a, const Eigen::Vector3I& b)
@@ -85,7 +86,8 @@ bool vertexFaceCCD_Redon(
     const Eigen::Vector3d& face_vertex0_end,
     const Eigen::Vector3d& face_vertex1_end,
     const Eigen::Vector3d& face_vertex2_end,
-    double& toi)
+    double& toi,
+    const double &input_tol)
 {
     const auto distance = [&](const Interval& t) {
         // Get the vertex at time t
@@ -138,7 +140,7 @@ bool vertexFaceCCD_Redon(
     double tol = compute_face_vertex_tolerance_1d(
         vertex_start, face_vertex0_start, face_vertex1_start,
         face_vertex2_start, vertex_end, face_vertex0_end, face_vertex1_end,
-        face_vertex2_end);
+        face_vertex2_end,input_tol);
 
     Interval toi_interval;
     bool is_impacting = interval_root_finder(
@@ -161,7 +163,8 @@ double compute_edge_edge_tolerance_1d(
     const Eigen::Vector3d& edge0_vertex0_end,
     const Eigen::Vector3d& edge0_vertex1_end,
     const Eigen::Vector3d& edge1_vertex0_end,
-    const Eigen::Vector3d& edge1_vertex1_end)
+    const Eigen::Vector3d& edge1_vertex1_end,
+    const double input_tol)
 {
     // Compute the maximum trajectory length of all the vertices
     double dl = std::max(
@@ -172,7 +175,7 @@ double compute_edge_edge_tolerance_1d(
             (edge1_vertex0_end - edge1_vertex0_start).norm(),
             (edge1_vertex1_end - edge1_vertex1_start).norm()));
 
-    return CCD_LENGTH_TOL / dl;
+    return input_tol / dl;
 }
 
 bool are_segments_intersecting(
@@ -202,7 +205,8 @@ bool edgeEdgeCCD_Redon(
     const Eigen::Vector3d& edge0_vertex1_end,
     const Eigen::Vector3d& edge1_vertex0_end,
     const Eigen::Vector3d& edge1_vertex1_end,
-    double& toi)
+    double& toi,
+    const double &input_tol)
 {
     const auto distance = [&](const Interval& t) {
         Eigen::Vector3I edge0_vertex0 = (edge0_vertex0_end.cast<Interval>()
@@ -254,7 +258,7 @@ bool edgeEdgeCCD_Redon(
     double tol = compute_edge_edge_tolerance_1d(
         edge0_vertex0_start, edge0_vertex1_start, edge1_vertex0_start,
         edge1_vertex1_start, edge0_vertex0_end, edge0_vertex1_end,
-        edge1_vertex0_end, edge1_vertex1_end);
+        edge1_vertex0_end, edge1_vertex1_end, input_tol);
 
     Interval toi_interval;
     bool is_impacting = interval_root_finder(
@@ -275,7 +279,8 @@ Eigen::Vector3d compute_face_vertex_tolerance_3d(
     const Eigen::Vector3d& ve,
     const Eigen::Vector3d& f0e,
     const Eigen::Vector3d& f1e,
-    const Eigen::Vector3d& f2e)
+    const Eigen::Vector3d& f2e,
+    const double input_tol)
 {
     // Compute the maximum trajectory length of all the vertices
     double dl = std::max(
@@ -287,8 +292,8 @@ Eigen::Vector3d compute_face_vertex_tolerance_3d(
     // double edge_length = std::max(edge0_length, edge1_length);
 
     return Eigen::Vector3d(
-        CCD_LENGTH_TOL / dl, CCD_LENGTH_TOL / edge0_length,
-        CCD_LENGTH_TOL / edge1_length);
+        input_tol / dl, input_tol / edge0_length,
+        input_tol / edge1_length);
 }
 
 bool vertexFaceCCD_Interval(
@@ -300,7 +305,8 @@ bool vertexFaceCCD_Interval(
     const Eigen::Vector3d& face_vertex0_end,
     const Eigen::Vector3d& face_vertex1_end,
     const Eigen::Vector3d& face_vertex2_end,
-    double& toi)
+    double& toi,
+    const double &input_tol)
 {
     const auto distance = [&](const Eigen::VectorX3I& params) {
         assert(params.size() == 3);
@@ -336,7 +342,7 @@ bool vertexFaceCCD_Interval(
     Eigen::Vector3d tol = compute_face_vertex_tolerance_3d(
         vertex_start, face_vertex0_start, face_vertex1_start,
         face_vertex2_start, vertex_end, face_vertex0_end, face_vertex1_end,
-        face_vertex2_end);
+        face_vertex2_end,input_tol);
     Eigen::VectorX3I toi_interval;
     bool is_impacting = interval_root_finder(
         distance, Eigen::Vector3I::Constant(Interval(0, 1)), tol, toi_interval,
@@ -362,7 +368,8 @@ bool vertexFaceCCD_Interval(
     const Eigen::Vector3d& edge0_vertex0_end,
     const Eigen::Vector3d& edge0_vertex1_end,
     const Eigen::Vector3d& edge1_vertex0_end,
-    const Eigen::Vector3d& edge1_vertex1_end)
+    const Eigen::Vector3d& edge1_vertex1_end,
+    const double input_tol)
 {
     // Compute the maximum trajectory length of all the vertices
     double dl = std::max(
@@ -382,8 +389,8 @@ bool vertexFaceCCD_Interval(
     // double edge_length = std::max(edge0_length, edge1_length);
 
     return Eigen::Vector3d(
-        CCD_LENGTH_TOL / dl, CCD_LENGTH_TOL / edge0_length,
-        CCD_LENGTH_TOL / edge1_length);
+        input_tol / dl, input_tol / edge0_length,
+        input_tol / edge1_length);
 }
 
 
@@ -396,7 +403,8 @@ bool vertexFaceCCD_Interval(
     const Eigen::Vector3d& edge0_vertex1_end,
     const Eigen::Vector3d& edge1_vertex0_end,
     const Eigen::Vector3d& edge1_vertex1_end,
-    double& toi)
+    double& toi,
+    const double &input_tol)
 {
     const auto distance = [&](const Eigen::VectorX3I& params) {
         assert(params.size() == 3);
@@ -432,7 +440,7 @@ bool vertexFaceCCD_Interval(
     Eigen::Vector3d tol = compute_edge_edge_tolerance(
         edge0_vertex0_start, edge0_vertex1_start, edge1_vertex0_start,
         edge1_vertex1_start, edge0_vertex0_end, edge0_vertex1_end,
-        edge1_vertex0_end, edge1_vertex1_end);
+        edge1_vertex0_end, edge1_vertex1_end,input_tol);
 
     Eigen::VectorX3I toi_interval;
     bool is_impacting = interval_root_finder(

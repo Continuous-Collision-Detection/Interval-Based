@@ -24,7 +24,8 @@ bool vertexFaceCCD_Interval(
     const Eigen::Vector3d& face_vertex0_end,
     const Eigen::Vector3d& face_vertex1_end,
     const Eigen::Vector3d& face_vertex2_end,
-    double& toi);
+    double& toi,
+    const double &input_tol=1e-6);
 
 bool edgeEdgeCCD_Interval(
     const Eigen::Vector3d& edge0_vertex0_start,
@@ -35,7 +36,8 @@ bool edgeEdgeCCD_Interval(
     const Eigen::Vector3d& edge0_vertex1_end,
     const Eigen::Vector3d& edge1_vertex0_end,
     const Eigen::Vector3d& edge1_vertex1_end,
-    double& toi);
+    double& toi,
+    const double &input_tol=1e-6);
 
 
 
@@ -48,7 +50,8 @@ bool vertexFaceCCD_Redon(
     const Eigen::Vector3d& face_vertex0_end,
     const Eigen::Vector3d& face_vertex1_end,
     const Eigen::Vector3d& face_vertex2_end,
-    double& toi);
+    double& toi,
+    const double &input_tol=1e-6);
 
 bool edgeEdgeCCD_Redon(
     const Eigen::Vector3d& edge0_vertex0_start,
@@ -59,7 +62,8 @@ bool edgeEdgeCCD_Redon(
     const Eigen::Vector3d& edge0_vertex1_end,
     const Eigen::Vector3d& edge1_vertex0_end,
     const Eigen::Vector3d& edge1_vertex1_end,
-    double& toi);
+    double& toi,
+    const double &input_tol=1e-6);
 
 
 } // namespace intervalccd
