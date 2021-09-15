@@ -10,16 +10,6 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR})
 list(REMOVE_DUPLICATES CMAKE_MODULE_PATH)
 include(INTERVAL_CCDDownloadExternal)
 
-
-# if(TIGHT_INCLUSION_WITH_GMP)
-#   #GMP
-#   find_package(GMPECCD)
-#   IF(NOT ${GMP_FOUND})
-#           MESSAGE(FATAL_ERROR "Cannot find GMP")
-#   ENDIF()
-# endif()
-
-
 if(NOT TARGET Eigen3::Eigen)
   ccd_download_eigen()
   add_library(iccd_eigen INTERFACE)
